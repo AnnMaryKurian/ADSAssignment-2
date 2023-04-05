@@ -11,7 +11,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import scipy.stats as stats
 
-
 def read_data(filename):
     dframe = pd.read_csv(filename, skiprows=4)
     return dframe
@@ -41,16 +40,18 @@ def stat_data(dframe, col, value, yr, indi):
     df3 = df3.loc[:, indi]
     return df3
 
+
 def bar_plot(data, title, x, y):
-    ax = data.plot.bar(x='Country Name', rot=0, figsize=(50,30), fontsize=50)
-    ax.set_yticks([0,20,40,60,80,100])
-    ax.set_title(title.upper(), fontsize=50, fontweight = 'bold')
+    ax = data.plot.bar(x='Country Name', rot=0, figsize=(50, 30), fontsize=50)
+    ax.set_yticks([0, 20, 40, 60, 80, 100])
+    ax.set_title(title.upper(), fontsize=50, fontweight='bold')
     ax.set_xlabel(x, fontsize=50)
     ax.set_ylabel(y, fontsize=50)
     ax.legend(fontsize=50)
     plt.savefig(title + '.png')
     plt.show()
     return
+
 
 def line_plot(data, title, x, y):
     data.plot.line(figsize=(50, 30), fontsize=36, linewidth=10.0)
@@ -63,6 +64,16 @@ def line_plot(data, title, x, y):
     plt.show()
     return
 
+
+def heat_map(data):
+    title = 'Heat Map of Brazil'
+    plt.figure(figsize=(20, 18))
+    sns.heatmap(data.corr(), annot=True)
+    plt.title(title, fontsize=50, fontweight='bold')
+    plt.savefig(title + '.png')
+    return data
+
+
 data = read_data("CompleteDataSet.csv")
 bar_country = ['Rwanda', 'Poland', 'Burkina Faso', 'Lithuania']
 bar_year = ['2000', '2001', '2002', '2003']
@@ -71,7 +82,7 @@ bardata1, bardata2 = datafilter(
 print(bardata1)
 print(bardata2)
 bardata3, bardata4 = datafilter(data, 'Indicator Name',
-                          'Agricultural land (% of land area)', bar_country, bar_year)
+                                'Agricultural land (% of land area)', bar_country, bar_year)
 print(bardata3)
 print(bardata4)
 bar_plot(bardata1, 'CO2 emissions from liquid fuel consumption',
@@ -87,13 +98,31 @@ print(linedata1)
 print(linedata2)
 
 linedata3, linedata4 = datafilter(data, 'Indicator Name',
-                          'Arable land (% of land area)', line_country, line_year)
+                                  'Arable land (% of land area)', line_country, line_year)
 print(linedata3)
 print(linedata4)
 line_plot(linedata2, 'CO2 emissions from solid fuel consumption',
           'Years', 'CO2 emissions')
 line_plot(linedata4, 'Arable land', 'Years', 'Arable land')
 
+years = ['1990', '1995', '2000', '2005', '2010']
+indicator = ['CO2 emissions from liquid fuel consumption (% of total)', 'Agricultural land (% of land area)',
+             'CO2 emissions from solid fuel consumption (% of total)', 'Arable land (% of land area)']
+datastat = stat_data(data, 'Country Name', 'Brazil', years, indicator)
+print(datastat.head())
+heat_map(datastat)
 
 
-
+start = 1995
+end = 2010
+year_range = [str(i) for i in range(start, end+1)]
+indic = ['CO2 emissions from liquid fuel consumption (% of total)', 'Agricultural land (% of land area)',
+         'Agriculture, forestry, and fishing, value added (% of GDP)', 'Arable land (% of land area)']
+des = stat_data(data, 'Country Name', 'Kuwait', year_range, indic)
+summary_stats = des.describe()
+print(summary_stats)
+skewness = stats.skew(des['Arable land (% of land area)'])
+kurtosis = des['Agricultural land (% of land area)'].kurtosis()
+print('Skewness of Arable land in Brazil : ', skewness)
+print('kurtosis of CO2 emissions  in Brazil : ', kurtosis)
+summary_stats.to_csv('summary_statistics7.csv')
