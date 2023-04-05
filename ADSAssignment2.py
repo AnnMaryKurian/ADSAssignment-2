@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import scipy.stats as stats
 
+
 def read_data(filename):
     '''
     Reading and performing file manipulation
@@ -24,11 +25,11 @@ def datafilter(dframe, col, value, coun, yr):
     Grouping the data using the function groupby.
     parameters required are passed from function call.
     '''
-    
+
     df1 = dframe.groupby(col, group_keys=True)
     #Retrieving the data using get_group
     df1 = df1.get_group(value)
-    #Resetting the data frame index 
+    #Resetting the data frame index
     df1 = df1.reset_index()
     df1.set_index('Country Name', inplace=True)
     #Cropping the dataframe data
@@ -78,6 +79,8 @@ def bar_plot(data, title, x, y):
     return
 
 #Function for lineplot is defined
+
+
 def line_plot(data, title, x, y):
     #Plotting line graph
     data.plot.line(figsize=(50, 30), fontsize=36, linewidth=10.0)
@@ -93,17 +96,20 @@ def line_plot(data, title, x, y):
     return
 
 #Function to create heatmap
+
+
 def heat_map(data):
     #Setting title for Heat Map
     title = 'Heat Map of Brazil'
     plt.figure(figsize=(20, 18))
     #Creating Heat Map and saving ploted image
-    sns.heatmap(data.corr(), annot=True)
+    heatmap = sns.heatmap(data.corr(), annot=True, cmap="Spectral")
     plt.title(title, fontsize=50, fontweight='bold')
-    plt.savefig(title + '.png')
+    plt.savefig(title + '.png', dpi=300, bbox_inches='tight')
     return data
 
-#Reading data for filtering dataframe 
+
+#Reading data for filtering dataframe
 data = read_data("CompleteDataSet.csv")
 #Countries and Years for filtering bargraph data
 bar_country = ['Rwanda', 'Poland', 'Burkina Faso', 'Lithuania']
@@ -119,8 +125,8 @@ print(bardata3)
 print(bardata4)
 #Calling bar_plot function for ploting bar graph
 bar_plot(bardata1, 'CO2 emissions from liquid fuel consumption',
-         'Countries', 'CO2 Emissions')
-bar_plot(bardata3, 'Agricultural land ', 'Countries', 'Agricultural land')
+         'Countries', 'CO2 Emissions(% of total)')
+bar_plot(bardata3, 'Agricultural land ', 'Countries', 'Agricultural land(% of land area)')
 
 
 #Countries and Years for filtering lineplot data
@@ -138,9 +144,8 @@ print(linedata3)
 print(linedata4)
 #Calling line_plot function for ploting line plot
 line_plot(linedata2, 'CO2 emissions from solid fuel consumption',
-          'Years', 'CO2 emissions')
-line_plot(linedata4, 'Arable land', 'Years', 'Arable land')
-
+          'Years', 'CO2 emissions(% of total)')
+line_plot(linedata4, 'Arable land', 'Years', 'Arable land(% of land area)')
 
 
 #Setting the years and indicators to be passed as parameters
@@ -151,6 +156,7 @@ datastat = stat_data(data, 'Country Name', 'Brazil', years, indicator)
 print(datastat.head())
 #Calling heatmap function along with parameters
 heat_map(datastat)
+
 
 #Range of years, for data analysis
 start = 1995
